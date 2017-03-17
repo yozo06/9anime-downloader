@@ -34,13 +34,13 @@ do {
 var i;
 for(i=StarEpisode -1; i<=endEpisode - 1; i++)
 {
-	output.push('<table>')
-	for (var i = 0; i < myarray .length; i += 2) {
-    		output.push('<tr><td>')
-    		output.push(myarray [i])
-    		output.push('</td><td>')
-    		output.push(myarray [i+1])
-    		output.push('</td></tr>')
+	episodeLinks.push('<table>')
+	for (var j = 0; j < myarray .length; j += 2) {
+    		episodeLinks.push('<tr><td>')
+    		episodeLinks.push(myarray [i])
+    		episodeLinks.push('</td><td>')
+    		episodeLinks.push(myarray [i+1])
+    		episodeLinks.push('</td></tr>')
 	};
-	output.push('</table>')	
+	episodeLinks.push('</table>')	
 }
