@@ -52,7 +52,8 @@ for (i = (episodeLinks.length - startEpisode); i >= (episodeLinks.length - endEp
 					for(j = 0; j < downloadQualityOptions.length; j++) {
 						if(videoQuality === downloadQualityOptions[j].html()) {
 							long_url = downloadQualityOptions[j].attr('href');
-							console.log(i); 
+							console.log(i);
+							console.log(long_url);
 							get_short_url(long_url, login, api_key);
 						}
 					}
@@ -62,21 +63,3 @@ for (i = (episodeLinks.length - startEpisode); i >= (episodeLinks.length - endEp
     });       
 }
 
-
-function get_short_url(long_url, login, api_key)
-{
-    $.getJSON(
-        "http://api.bitly.com/v3/shorten?callback=?", 
-        { 
-            "format": "json",
-            "apiKey": api_key,
-            "login": login,
-            "longUrl": long_url, 
-			async: true
-        },
-        function(response)
-        {
-            console.log(response.data.url);
-        }
-    ); 
-}
