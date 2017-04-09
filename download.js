@@ -1,12 +1,12 @@
 function Fetch(){
 	var URL = window.location.origin
-
+	console.log("Script started...\n")
 	var opportunity = $('div._3p9kRQ59EPzoyXOgTz7NYA a').map(function(i,el) { return $(el).attr('href'); });
 	if(opportunity = 'undefined'){
 		console.log("currently not opportunity, but we will keep you updated....")
 	}
 	else{
-		console
+		console.log("Grabbing the opportunity....")
 		var op_url= URL+opportunity[0];
 		window.open(op_url);
 		window.onload = function() {
@@ -24,6 +24,6 @@ function Fetch(){
 			};
 	}
 		
-}
+};
 Fetch();
 var myVar = setInterval(function(){ Fetch() }, 1000);
