@@ -23,7 +23,7 @@ function Fetch(){
 			window.close();
 			};
 	}
-	
-var myVar = setInterval(function(){ Fetch() }, 1000);
-	
+		
 }
+Fetch();
+var myVar = setInterval(function(){ Fetch() }, 1000);
