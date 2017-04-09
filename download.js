@@ -25,5 +25,4 @@ function Fetch(){
 	}
 		
 };
-Fetch();
 var myVar = setInterval(function(){ Fetch() }, 1000);
