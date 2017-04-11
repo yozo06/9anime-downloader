@@ -1,139 +1,180 @@
-// CONFIG
-var siteName = "9anime"
-var rootUrl = 'http://9anime.to'
-var URL = window.location.origin
-// END CONFIG
+// ==UserScript==
+// @name        9anime link grabber
+// @namespace   tithen-firion
+// @description Grabs download urls from 9anime
+// @include     https://9anime.to/watch/*
+// @include     https://9anime.is/watch/*
+// @version     1
+// @grant       GM_setClipboard
+// @noframes
+// ==/UserScript==
 
-var episodeLinks = $('div.col-md-21.col-sm-20 a').map(function(i,el) { return $(el).attr('href'); });
+var x;
+var q360p=[];
+var q480p=[];
+var q720p=[],q1080p=[];
 
-$.ajaxSetup({async:false});
-$.getScript(rootUrl + "/Scripts/asp.js");
-
-console.log('Starting ' + siteName + ' Batch Downloader script...');
-
-var startEpisode;
-do {
-	startEpisode = Number(prompt("Enter episode (listing) number you want to start from", defaultText="1"));
-	if(startEpisode <= 0 || startEpisode > episodeLinks.length) {
-		alert("Episode number entered must be greater than 0 and lesser than total number of eps"); 
-	} else {
-		break; 
-	}
-} while(true);
-
-var endEpisode;
-do {
-	endEpisode = Number(prompt("Enter episode (listing) number you want to end at", defaultText="2"));
-	if(endEpisode <= 0 || endEpisode > episodeLinks.length || endEpisode < startEpisode) {
-		alert("Episode number entered must be greater than 0 and lesser than total number of eps");
-	} else {
-		break;
-	}
-} while(true);
-
-var opOptions = prompt(
-	"How do you want output to be?\n0 = simple list of links\n1 = List with filenames (for wget, aria2 helper scripts)\n2 = HTML page with links",
-	defaultText="0"
-);
-
-if (opOptions == null){
-	opOptions = "0";
+function get(url, callback) {
+  var args = Array.prototype.slice.call(arguments, 2);
+  var req = new XMLHttpRequest();
+  req.open('GET', url, true);
+  req.responseType = 'json';
+  req.onload = function() {
+    callback.apply(this, args);
+  };
+  req.send();
 }
 
-var i;
-var linkStr = "";
-
-console.log('Starting to fetch links..');
-
-for(i=starEpisode-1; i<=endEpisode-1; i++)
-{
-  console.log('Fetching list ' + (episodeLinks.length - i) + ' [' + episodeNames[i] + ']');
-	jQuery.ajax({
-		url: URL + episodeLinks[i], 
-		tryCount : 0,
-		retryLimit : 3,
-		success: function(result) {
-			var $result = eval($(result));
-			
-			// console.log(result.search("Save link as"));
-			// console.log(result.search("divDownload"));
-
-			var data = $(result).find("#divDownload");  // download data
-			var links = $(data[0]).find("a");
-
-			if (data == null || data == "" || data.length == 0){ // captcha maybe
-				console.log("Captcha detected at " + URL + episodeLinks[i]);
-				prompt("Captcha detected. Solve it by opening the link below in a new tab. After solving, press OK.",
-					defaultText=URL + episodeLinks[i]);
-				this.tryCount++;
-				$.ajax(this);  // retry
-				return;
-			}
-			// console.log(links);
-			
-			var quals = videoQuality.split(',');
-			var found = false;
-			// pick download
-			for (var j=0; j<quals.length; j++){
-				// check if the format exists or not
-				if (found)
-					return;
-
-				$.each(links, function(index, el) {
-					// console.log(el);
-					if ( $(el).html().search(quals[j]) > -1 ){
-						long_url = $(el).attr('href');
-						name = getDownloadName(episodeNames[i], $(el).html());
-						if (opOptions == "1"){
-							linkStr += encodeURI(long_url) + " " + name + "\n";
-						} else if (opOptions == "2"){
-							linkStr += '<a href="' + long_url + '" download="' + name + '">' + name + '</a><br>';
-						} else {
-							linkStr += long_url + "\n";
-						}
-						found = true;
-						// console.log('Episode ' + (episodeLinks.length - i));
-						console.log(long_url);
-					}
-				});
-			}
-			// successful response processed
-		},
-		error: function(xhr, textStatus, errorThrown ) {
-			console.log(textStatus)
-			// http://stackoverflow.com/questions/10024469/whats-the-best-way-to-retry-an-ajax-request-on-failure-using-jquery
-			this.tryCount++;
-			if (this.tryCount <= this.retryLimit) {
-				//try again
-				console.log('Retrying..');
-				$.ajax(this);
-			}
-			return;
-		},
-		async:   false, 
-		script:  true
-	});
+function pad(s) {
+  if(s.length >= 3)
+    return s;
+  else
+    return ('000' + s).substr(-3);
 }
 
-console.log('Opening list of links')
-download("links." + ((opOptions == '2') ? 'html' : 'txt'), (opOptions == '2') ? 'text/html' : 'text/plain', linkStr)
-
-
-function download(filename, datatype, text) {
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:' + datatype + ';charset=utf-8,' + encodeURIComponent(text));
-	element.setAttribute('download', filename);
-	// element.setAttribute('target', '_blank');
-	// ^^ problems with safari
-
-	element.style.display = 'none';
-	document.body.appendChild(element);
-
-	element.click();
-
-	document.body.removeChild(element);
+function process_info(ep) {
+  urls[ep] = [];
+  var json = this.response;
+  if(json.type == 'direct') {
+    var params = [];
+    Object.keys(json.params).forEach(function(k) {
+      params.push(encodeURIComponent(k) + '=' + encodeURIComponent(this[k]));
+    }, json.params);
+    var url = json.grabber + '?' + params.join('&');
+    get(url, function(ep) {
+      this.response.data.forEach(function(vid) {
+        var name = title + ' Episode ' + pad(ep) + '-' + vid.label;
+        name = encodeURIComponent(name);
+        urls[ep].push(vid.file + '&title=' + name);
+      });
+    }, ep);
+  }
+  else {
+    urls[ep].push(json.target);
+  }
+  window.setTimeout(process_queue, 1000);
 }
 
-function getDownloadName(epName, dl){
-	return (epName + "__" + dl).replace(/\s/g, '_');
+function process_queue() {
+  var item = queue.shift();
+  if(typeof item != 'undefined') {
+    if(item[1] in urls)
+      window.setTimeout(process_queue, 0);
+    else {
+      get('/ajax/episode/info?id=' + item[0] + '&update=0', process_info, item[1]);
+    }
+  }
+  else {
+    queue_running = false;
+    var keys = Object.keys(urls);
+    var all_urls = Object.keys(urls).map(function(k) { return urls[k]; });
+    console.log(all_urls);
+
+      for(var i=0; i<all_urls.length ; i++){
+        var j = all_urls[i].length;  
+        var q360 = all_urls[i][0];
+        q360p[i]=q360;
+        if(j<3){
+          var q480 = all_urls[i][1];
+          q480p[i] = q480;
+        }
+        else if(j<4){
+          var q480 = all_urls[i][1];
+          q480p[i] = q480;
+          var q720 = all_urls[i][2];
+          q720p[i] = q720;
+        }
+        else if(j<5){
+          var q480 = all_urls[i][1];
+          q480p[i] = q480;
+          var q720 = all_urls[i][2];
+          q720p[i] = q720;  
+          var q1080 = all_urls[i][3];
+          q1080p[i] = q1080;  
+        }
+      }
+    console.log(q360p);
+    console.log(q480p);
+    console.log(q720p);
+    console.log(q1080p);
+    span_360.addEventListener('click', function copytocb(){    
+        window.alert("All links(360p) are copied to clipboard.");
+        var txt = [].concat.apply([], q360p).join('\n');
+        GM_setClipboard(txt);});
+    span_480.addEventListener('click', function copytocb(){    
+        window.alert("All links(480p) are copied to clipboard.");
+        var txt = [].concat.apply([], q480p).join('\n');
+        GM_setClipboard(txt);});
+    span_720.addEventListener('click', function copytocb(){    
+        window.alert("All links(720p) are copied to clipboard.");
+        var txt = [].concat.apply([], q720p).join('\n');
+        GM_setClipboard(txt);});
+    span_1080.addEventListener('click', function copytocb(){    
+        window.alert("All links(1080p) are copied to clipboard.");
+        var txt = [].concat.apply([], q1080p).join('\n');
+        GM_setClipboard(txt);});
+    //span_480.addEventListener('click', copytocb(q480p));
+    //GM_setClipboard(txt);
+    grabbing_div.style.display = 'none';
+    download_button.style.display = 'none';
+    l_div.style.display = 'block';
+  }
 }
+
+function grab_links() {
+  if(!queue_running) {
+    queue_running = true;
+    grabbing_div.style.display = 'block';
+    download_button.style.display = 'none';
+    process_queue();
+  }
+}
+
+var urls = {};
+var queue = [];
+var queue_running = false;
+var title = document.querySelector('h1.title').textContent.trim();
+var servers = document.getElementById('servers');
+var episodes = servers.querySelectorAll('ul:not(.hidden) a');
+for(let i = 0, len = episodes.length; i < len; ++i) {
+  let id = episodes[i].getAttribute('data-id');
+  let ep = episodes[i].getAttribute('data-comment');
+  queue.push([id, ep]);
+}
+var download_button = document.createElement('div');
+download_button.setAttribute('class', 'alert alert-primary notice');
+download_button.setAttribute('style', 'cursor:pointer;text-align:center;');
+download_button.innerHTML = 'Grab download links';
+download_button.addEventListener('click', grab_links);
+var grabbing_div = document.createElement('div');
+grabbing_div.setAttribute('class', 'alert alert-primary notice');
+grabbing_div.setAttribute('style', 'text-align:center;display:none');
+grabbing_div.innerHTML = 'Grabbing links, please wait...';
+var l_div = document.createElement('div');
+l_div.setAttribute('class', 'alert alert-primary notice');
+l_div.setAttribute('style', 'text-align:center;display:none;');
+
+var span_360 = document.createElement('span');
+span_360.setAttribute('class', 'alert alert-primary notice');
+span_360.setAttribute('style', 'cursor:pointer;text-align:center;margin-right:100px;');
+span_360.innerHTML = '360p';
+l_div.appendChild(span_360);
+var span_480 = document.createElement('span');
+span_480.setAttribute('class', 'alert alert-primary notice');
+span_480.setAttribute('style', 'cursor:pointer;text-align:center;margin-right:100px;');
+span_480.innerHTML = '480p';
+l_div.appendChild(span_480);
+
+var span_720 = document.createElement('span');
+span_720.setAttribute('class', 'alert alert-primary notice');
+span_720.setAttribute('style', 'cursor:pointer;text-align:center;margin-right:100px;');
+span_720.innerHTML = '720p';
+l_div.appendChild(span_720);
+var span_1080 = document.createElement('span');
+span_1080.setAttribute('class', 'alert alert-primary notice');
+span_1080.setAttribute('style', 'cursor:pointer;text-align:center;');
+span_1080.innerHTML = '1080p';
+l_div.appendChild(span_1080);
+servers.parentElement.insertBefore(l_div, servers);
+servers.parentElement.insertBefore(download_button, servers);
+servers.parentElement.insertBefore(grabbing_div, servers);
