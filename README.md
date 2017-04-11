@@ -6,9 +6,8 @@ All download links will be copied directly to your clipboard on your system and 
 To download choose "new batch from clipboard" in your download manager.
 
 ## Deployment
-```
 Add the [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or greasemonkey addon to your browser
-```
+
 ```
 1.Open the anime you want to download in your browser.
 ```
@@ -24,6 +23,18 @@ Add the [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dh
 
 ## Prerequisites
 * Tampermonkey or Greasemonkey
+```
+1.Create new script.
+```
+```
+2.Copy paste the code.
+```
+```
+3.Save and enable tampermonkey.
+```
+```
+4.Good to go.
+```
 
 ## Authors
 
