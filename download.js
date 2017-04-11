@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        9anime link grabber
-// @namespace   tithen-firion
+// @namespace   yozo
 // @description Grabs download urls from 9anime
 // @include     https://9anime.to/watch/*
 // @include     https://9anime.is/watch/*
