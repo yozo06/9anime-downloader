@@ -4,6 +4,7 @@ get download links for all episodes and use download managers like idm to downlo
 ## How it works
 All download links will be copied directly to your clipboard on your system and use ***IDM***(windows) ,***uGet***(ubuntu) to download this batch.
 To download choose "new batch from clipboard" in your download manager.
+Takes time to grab all links as per the number of episodes.(100 episodes - 5mins(approx.))
 
 ## Deployment
 Add the [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or greasemonkey addon to your browser
