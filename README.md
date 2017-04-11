@@ -25,6 +25,9 @@ Add the [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dh
 ## Prerequisites
 * Tampermonkey or Greasemonkey
 ```
+Tampermonkey plugin after installation can be located on right-hand side of the address bar.
+```
+```
 1.Create new script.
 ```
 ```
