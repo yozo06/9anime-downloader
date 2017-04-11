@@ -74,15 +74,30 @@ function process_queue() {
         var j = all_urls[i].length;  
         var q360 = all_urls[i][0];
         q360p[i]=q360;
+        span_360.addEventListener('click', function copytocb(){    
+        window.alert("All links(360p) are copied to clipboard.");
+        var txt = [].concat.apply([], q360p).join('\n');
+        GM_setClipboard(txt);});
         if(j<3){
           var q480 = all_urls[i][1];
           q480p[i] = q480;
+          span_480.addEventListener('click', function copytocb(){    
+          window.alert("All links(480p) are copied to clipboard.");
+          var txt = [].concat.apply([], q480p).join('\n');
         }
         else if(j<4){
           var q480 = all_urls[i][1];
           q480p[i] = q480;
           var q720 = all_urls[i][2];
           q720p[i] = q720;
+          span_480.addEventListener('click', function copytocb(){    
+          window.alert("All links(480p) are copied to clipboard.");
+          var txt = [].concat.apply([], q480p).join('\n');
+          GM_setClipboard(txt);});
+          span_720.addEventListener('click', function copytocb(){    
+          window.alert("All links(720p) are copied to clipboard.");
+          var txt = [].concat.apply([], q720p).join('\n');
+          GM_setClipboard(txt);});
         }
         else if(j<5){
           var q480 = all_urls[i][1];
@@ -90,29 +105,27 @@ function process_queue() {
           var q720 = all_urls[i][2];
           q720p[i] = q720;  
           var q1080 = all_urls[i][3];
-          q1080p[i] = q1080;  
+          q1080p[i] = q1080;
+          span_480.addEventListener('click', function copytocb(){    
+          window.alert("All links(480p) are copied to clipboard.");
+          var txt = [].concat.apply([], q480p).join('\n');
+          GM_setClipboard(txt);});
+          span_720.addEventListener('click', function copytocb(){    
+          window.alert("All links(720p) are copied to clipboard.");
+          var txt = [].concat.apply([], q720p).join('\n');
+          GM_setClipboard(txt);});
+          span_1080.addEventListener('click', function copytocb(){    
+          window.alert("All links(1080p) are copied to clipboard.");
+          var txt = [].concat.apply([], q1080p).join('\n');
+          GM_setClipboard(txt);});
         }
       }
     console.log(q360p);
     console.log(q480p);
     console.log(q720p);
     console.log(q1080p);
-    span_360.addEventListener('click', function copytocb(){    
-        window.alert("All links(360p) are copied to clipboard.");
-        var txt = [].concat.apply([], q360p).join('\n');
-        GM_setClipboard(txt);});
-    span_480.addEventListener('click', function copytocb(){    
-        window.alert("All links(480p) are copied to clipboard.");
-        var txt = [].concat.apply([], q480p).join('\n');
-        GM_setClipboard(txt);});
-    span_720.addEventListener('click', function copytocb(){    
-        window.alert("All links(720p) are copied to clipboard.");
-        var txt = [].concat.apply([], q720p).join('\n');
-        GM_setClipboard(txt);});
-    span_1080.addEventListener('click', function copytocb(){    
-        window.alert("All links(1080p) are copied to clipboard.");
-        var txt = [].concat.apply([], q1080p).join('\n');
-        GM_setClipboard(txt);});
+
+    
     //span_480.addEventListener('click', copytocb(q480p));
     //GM_setClipboard(txt);
     grabbing_div.style.display = 'none';
