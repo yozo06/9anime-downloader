@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        9anime link grabber
-// @namespace   yozo
+// @namespace   yozo06
 // @description Grabs download urls from 9anime
 // @include     https://9anime.to/watch/*
 // @include     https://9anime.is/watch/*
@@ -68,33 +68,27 @@ function process_queue() {
         queue_running = false;
         var keys = Object.keys(urls);
         var all_urls = Object.keys(urls).map(function(k) { return urls[k]; });
-        //console.log(all_urls);
+        console.log(all_urls);
 
         for(var i=0; i<all_urls.length ; i++){
             var j = all_urls[i].length;
             if(j<2){
                 var q360 = all_urls[i][0];
                 q360p[i]=q360;
-                span_360.setAttribute('style','display:inline');
             }
             else if(j<3){
                 var q360 = all_urls[i][0];
                 q360p[i]=q360;
-                span_360.setAttribute('style','display:inline');
                 var q480 = all_urls[i][1];
                 q480p[i] = q480;
-                span_480.setAttribute('style','display:inline');
             }
             else if(j<4){
                 var q360 = all_urls[i][0];
                 q360p[i]=q360;
-                span_360.setAttribute('style','display:inline');
                 var q480 = all_urls[i][1];
                 q480p[i] = q480;
                 var q720 = all_urls[i][2];
                 q720p[i] = q720;
-                span_480.setAttribute('style','display:inline');
-                span_720.setAttribute('style','display:inline');
             }
             else if(j<5){
                 var q360 = all_urls[i][0];
@@ -106,15 +100,20 @@ function process_queue() {
                 q720p[i] = q720;  
                 var q1080 = all_urls[i][3];
                 q1080p[i] = q1080;
-                span_480.setAttribute('style','display:inline');
-                span_720.setAttribute('style','display:inline');
-                span_1080.setAttribute('style','display:inline');
             }
         }
-        //console.log(q360p);
-        //console.log(q480p);
-        //console.log(q720p);
-        //console.log(q1080p);
+        if(q360p.length!=0){console.log("360 present");
+                           span_360.setAttribute('style','display:inline');}
+        if(q480p.length!=0){console.log("480 present");
+                           span_480.setAttribute('style','display:inline');}
+        if(q720p.length!=0){console.log("720 present");
+                           span_720.setAttribute('style','display:inline');}   
+        if(q1080p.length!=0){console.log("1080 present");
+                           span_1080.setAttribute('style','display:inline');}        
+        console.log(q360p);
+        console.log(q480p);
+        console.log(q720p);
+        console.log(q1080p);
         span_360.addEventListener('click', function copytocb(){    
             window.alert("All links(360p) are copied to clipboard.");
             var txt = [].concat.apply([], q360p).join('\n');
