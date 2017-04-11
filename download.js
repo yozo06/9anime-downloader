@@ -68,7 +68,7 @@ function process_queue() {
         queue_running = false;
         var keys = Object.keys(urls);
         var all_urls = Object.keys(urls).map(function(k) { return urls[k]; });
-        console.log(all_urls);
+        //console.log(all_urls);
 
         for(var i=0; i<all_urls.length ; i++){
             var j = all_urls[i].length;
@@ -111,10 +111,10 @@ function process_queue() {
                 span_1080.setAttribute('style','display:inline');
             }
         }
-        console.log(q360p);
-        console.log(q480p);
-        console.log(q720p);
-        console.log(q1080p);
+        //console.log(q360p);
+        //console.log(q480p);
+        //console.log(q720p);
+        //console.log(q1080p);
         span_360.addEventListener('click', function copytocb(){    
             window.alert("All links(360p) are copied to clipboard.");
             var txt = [].concat.apply([], q360p).join('\n');
