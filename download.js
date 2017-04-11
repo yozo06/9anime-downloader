@@ -78,11 +78,17 @@ function process_queue() {
                 span_360.setAttribute('style','display:inline');
             }
             else if(j<3){
+                var q360 = all_urls[i][0];
+                q360p[i]=q360;
+                span_360.setAttribute('style','display:inline');
                 var q480 = all_urls[i][1];
                 q480p[i] = q480;
                 span_480.setAttribute('style','display:inline');
             }
             else if(j<4){
+                var q360 = all_urls[i][0];
+                q360p[i]=q360;
+                span_360.setAttribute('style','display:inline');
                 var q480 = all_urls[i][1];
                 q480p[i] = q480;
                 var q720 = all_urls[i][2];
@@ -91,6 +97,9 @@ function process_queue() {
                 span_720.setAttribute('style','display:inline');
             }
             else if(j<5){
+                var q360 = all_urls[i][0];
+                q360p[i]=q360;
+                span_360.setAttribute('style','display:inline');
                 var q480 = all_urls[i][1];
                 q480p[i] = q480;
                 var q720 = all_urls[i][2];
